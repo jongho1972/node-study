@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= locals.title %></title>
+
+    <!-- 부트스트랩 이용 설정 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/public/main.css" />
+
+</head>
+
+<body>
+    <nav class="navbar bg-dark" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="/public/gsa_super_g-64.gif"
+                    alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+                간편 영화 후기
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="jumbotron" id="jumbotron">
+            <h1 class="display-4">인기/최신 영화에 한마디씩!</h1>
+            <p class="lead">Front-End와 Back-End 개발 실습 사이트입니다</p>
+            <hr class="my-4">
+            <p>활용 도구: HTML, CSS, JS, Node.js, MySql, VSCode, Postman</p>
+            <a class="btn btn-danger" id="jumbo-button" href="#" role="button">Developer: LEE, JONGHO</a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4" id="movie-list">
+            <div class="col">
+                <div class="card">
+                    <img src="" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <button type="button" class="btn btn-success" id="review-button" onclick="review()">리뷰 보기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal" id="review-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">후기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <input type="text" class="form-control" id="review" style="width: 70%">
+                    <button type="button" class="btn btn-primary" onclick="addReview()">후기 쓰기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 자바스크립트 사용 설정 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <!-- Jquery 사용 설정 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+    <script>
+        target_id = 0;
+
+        $(document).ready(function(){
+            console.log("시작")
+            
+            $.ajax({
+                url:"https://api.themoviedb.org/3/movie/popular?api_key=45cc44b04a313b7b4e029ab6e66299b9&page=1",
+                data:{},
+                type:"GET",
+                success: function(json){
+                    console.log(json)
+                    let movie_list = json.results
+
+                    $("#movie-list").html('')
+                    
+                    for (let i = 0; i < movie_list.length; i++){                        
+                        let card = `
+                        <div class="col">
+                            <div class="card">
+                                <img src="${'https://image.tmdb.org/t/p/w500' + movie_list[i].poster_path } " class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <h5 class="card-title">${movie_list[i].original_title}</h5>
+                                    <button type="button" class="btn btn-success" id="review-button" onclick="review(${movie_list[i].id})">리뷰 보기</button>
+                                </div>
+                            </div>
+                        </div>
+                        `
+                        $("#movie-list").append(card)
+                    }                    
+                },
+                error:function(err){
+                }
+            })
+        })
+
+        function review(id) {
+            target_id = id
+            $(".modal-body").html(``) 
+
+            $.ajax({
+                url:`/review/read?movie_id=${target_id}`,
+                data:{},
+                type:"GET",
+                success: function(json){
+                    console.log(json.data)
+                    let reviews = json.data
+                    for (i = 0; i < reviews.length; i++){
+                        $(".modal-body").append(`<p>${reviews[i].review}</p>`)
+                    }                        
+                },
+                error:function(err){
+                }
+            })
+
+            $('#review-modal').modal('show')
+        }
+
+        function addReview(){
+            let review = $("#review").val()
+            console.log(review)
+            let review_html = `<p>${review}</p>`
+
+            $.ajax({
+                url:`/review/create`,
+                data:{
+                    movie_id:target_id,
+                    review:review
+                },
+                type:"POST",
+                success: function(json){
+                    console.log(json)
+                    if(json.success == 200){
+                        console.log("저장 됐습니다")
+                    }else if(json.success == 400){
+                        alert("데이터가 이상합니다")
+                    }                    
+                },
+                error:function(err){
+                }
+            })
+
+            $(".modal-body").append(review_html)
+            $("#review").val('')
+        }
+    </script>
+
+</body>
+
+</html>
