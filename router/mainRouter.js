@@ -2,6 +2,42 @@ const express = require('express');
 const router = express.Router();
 const db = require('../model/db');
 
+router.get("/", function(req,res){    
+    res.render('main',{title:"영화 리뷰 사이트"}); 
+})
+
+router.get("/sitemap.xml", function(req,res){    
+    res.sendFile("/home/ubuntu/www/sitemap.xml");
+})
+
+router.get("/robots.txt", function(req,res){    
+    res.sendFile("/home/ubuntu/www/robots.txt");
+})
+
+router.post("/review/create",function(req,res){
+    let movie_id = req.body.movie_id;
+    let review = req.body.review;
+
+    if(movie_id == '' || movie_id == 0){
+        res.send({success:400})
+    }else{
+        db.reviews.create({
+            movie_id:movie_id,
+            review:review
+        }).then(function(result){
+            res.send({success:200})
+        })
+    }    
+})
+
+router.get("/review/read",function(req,res){
+    let movie_id = req.query.movie_id;
+
+    db.reviews.findAll({where:{movie_id:movie_id}}).then(function(result){
+        res.send({success:200,data:result})
+    })
+})
+
 // 크롤링에 필요한 도구
 const cheerio = require('cheerio');
 const axios = require('axios');
@@ -29,35 +65,6 @@ router.get("/excel/down",function(req,res){
     res.xls('data.xlsx',excel_data);
 
 })
-
-router.get("/", function(req,res){    
-    res.render('main',{title:"영화 리뷰 사이트"}); 
-})
-
-router.post("/review/create",function(req,res){
-    let movie_id = req.body.movie_id;
-    let review = req.body.review;
-
-    if(movie_id == '' || movie_id == 0){
-        res.send({success:400})
-    }else{
-        db.reviews.create({
-            movie_id:movie_id,
-            review:review
-        }).then(function(result){
-            res.send({success:200})
-        })
-    }    
-})
-
-router.get("/review/read",function(req,res){
-    let movie_id = req.query.movie_id;
-
-    db.reviews.findAll({where:{movie_id:movie_id}}).then(function(result){
-        res.send({success:200,data:result})
-    })
-})
-
 
 /*
     C : Create

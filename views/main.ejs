@@ -11,13 +11,24 @@
     
     <link rel="stylesheet" href="/public/main.css" />
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X92DVKZ9CH"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-X92DVKZ9CH');
+    </script>
+
+    <meta name="naver-site-verification" content="a2d8c6b4987462039fa193be8a38e1d6a7cc94ca" />
 </head>
 
 <body>
     <nav class="navbar bg-dark" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="/public/gsa_super_g-64.gif"
+                <img src="/public/jh.jpg"
                     alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
                 간편 영화 후기
             </a>
@@ -28,10 +39,10 @@
 
         <div class="jumbotron" id="jumbotron">
             <h1 class="display-4">인기/최신 영화에 한마디씩!</h1>
-            <p class="lead">Front-End와 Back-End 개발 실습 사이트입니다</p>
+            <p class="lead">Front-End, Back-End 강의 수강 후 만든 사이트입니다</p>
             <hr class="my-4">
-            <p>활용 도구: HTML, CSS, JS, Node.js, MySql, VSCode, Postman</p>
-            <a class="btn btn-danger" id="jumbo-button" href="#" role="button">Developer: LEE, JONGHO</a>
+            <p>활용 도구: HTML, CSS, JS, Node.js, MySql, AWS</p>
+            <a class="btn btn-danger" id="jumbo-button" href="#" role="button">개발자: 이종호</a>
         </div>
 
         <div class="row row-cols-1 row-cols-md-3 g-4" id="movie-list">
@@ -60,7 +71,7 @@
                 </div>
                 <div class="modal-footer">
                     <input type="text" class="form-control" id="review" style="width: 70%">
-                    <button type="button" class="btn btn-primary" onclick="addReview()">후기 쓰기</button>
+                    <button type="button" class="btn btn-primary" onclick="addReview()">등록하기</button>
                 </div>
             </div>
         </div>
@@ -96,7 +107,7 @@
                                 <img src="${'https://image.tmdb.org/t/p/w500' + movie_list[i].poster_path } " class="card-img-top" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title">${movie_list[i].original_title}</h5>
-                                    <button type="button" class="btn btn-success" id="review-button" onclick="review(${movie_list[i].id})">리뷰 보기</button>
+                                    <button type="button" class="btn btn-success" id="review-button" onclick="review(${movie_list[i].id})">후기 보기 & 작성</button>
                                 </div>
                             </div>
                         </div>

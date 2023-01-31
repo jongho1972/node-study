@@ -1,8 +1,8 @@
 var Sequelize = require("sequelize");
 var sequelize;
 
-sequelize = new Sequelize("class101","root","happy365@",{
-    host:"localhost",
+sequelize = new Sequelize("class101","class101","happy365",{
+    host:"class101.cndupnhcjdnl.ap-northeast-2.rds.amazonaws.com",
     port:3306,
     dialect:"mysql",
     timezone:"+09:00",
